@@ -1858,6 +1858,7 @@ a {
 
   .side-nav {
     gap: 15px;
+    display: none;
   }
 
   .side-nav a {
