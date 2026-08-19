@@ -11,7 +11,7 @@
     />
     <link rel="preload" href="images/sushimichi-logo.svg" as="image" />
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/koi-pond.css">
     <title>鮨道｜SUSHIMICHI</title>
     <meta
       name="description"
@@ -58,7 +58,7 @@
           <small>Counter sushi, reimagined in Sapporo.</small>
         </div>
       </aside>
-      <main class="content-scroll" id="top">
+      <main class="content-scroll" id="top" tabindex="-1">
         <section class="hero" aria-labelledby="hero-title">
           <img
             class="hero__image"
@@ -69,7 +69,6 @@
             fetchpriority="high"
           />
           <div class="hero__shade"></div>
-          <canvas class="hero__projection" aria-hidden="true"> </canvas>
           <div class="hero__content">
             <p class="eyebrow">INTERACTIVE PROJECTION MAPPING × SUSHI</p>
             <h1 id="hero-title">光が泳ぐ。<br />旬を握る。</h1>
@@ -133,9 +132,9 @@
             <figure class="experience-grid__panorama">
               <img
                 src="images/profile.png"
-                alt="錦鯉の映像が投影された鮨道のカウンター全景"
-                width="2000"
-                height="1125"
+                alt="鮨道のロゴと天然まぐろの握り"
+                width="1672"
+                height="941"
                 loading="lazy"
               />
             </figure>
@@ -179,9 +178,9 @@
             <figure class="experience-grid__course">
               <img
                 src="images/hand.jpg"
-                alt="錦鯉の光とともに提供される一品料理"
-                width="2000"
-                height="1125"
+                alt="手に持った雲丹の握り"
+                width="1600"
+                height="1200"
                 loading="lazy"
               />
             </figure>
@@ -326,50 +325,40 @@
                 <div class="sushi-gallery__image">
                   <img
                     src="images/iwashi.jpg"
-                    alt="天然まぐろ 中とろ"
-                    width="1500"
-                    height="1000"
+                    alt="石皿に置かれたいわしの握り"
+                    width="1108"
+                    height="1477"
                     loading="lazy"
                   />
                 </div>
-                <!-- <figcaption>
-                  <strong>天然まぐろ 中とろ</strong>
-                  <small>ほどける脂と、赤身の余韻。</small>
-                </figcaption> -->
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--second-left"
               >
                 <div class="sushi-gallery__image">
                   <img
-                    src="images/gallery/先付け.jpg"
-                    alt="生赤貝"
-                    width="1800"
-                    height="1200"
+                    src="images/gallery/sakizuke.jpg"
+                    alt="石皿に盛り付けられた先付け"
+                    width="1108"
+                    height="1477"
                     loading="lazy"
                   />
                 </div>
-                <!-- <figcaption>
-                  <strong>生赤貝</strong>
-                  <small>艶やかな甘みと、澄んだ歯ざわり。</small>
-                </figcaption> -->
+                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--second-right"
               >
                 <div class="sushi-gallery__image">
                   <img
-                    src="images/gallery/漬けマグロ.jpg"
-                    alt="オホーツク すじこ"
-                    width="1500"
-                    height="1000"
+                    src="images/gallery/zukemaguro.jpg"
+                    alt="石皿に置かれた漬けまぐろの握り"
+                    width="1108"
+                    height="1477"
                     loading="lazy"
                   />
                 </div>
-                <!-- <figcaption>
-                  <strong>オホーツク すじこ</strong>
-                  <small>西京味噌に漬けた、北のひと粒。</small>
-                </figcaption> -->
+                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--third-wide"
@@ -377,43 +366,37 @@
                 <div class="sushi-gallery__image">
                   <img
                     src="images/gallery/IMG_0257.JPG"
-                    alt="小樽 生にしん"
-                    width="1500"
-                    height="1000"
+                    alt="石の器に盛り付けられた一品料理"
+                    width="1108"
+                    height="1477"
                     loading="lazy"
                   />
                 </div>
-                <!-- <figcaption>
-                  <strong>小樽 生にしん</strong>
-                  <small>北海道の旬を、握りの一貫に。</small>
-                </figcaption> -->
+                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--third-mid-left"
               >
                 <div class="sushi-gallery__image">
                   <img
-                    src="images/gallery/16.jpg"
-                    alt="生蒸し海老"
-                    width="1500"
-                    height="1000"
+                    src="images/12.jpg"
+                    alt="笹の葉に置かれた天然まぐろの握り"
+                    width="1600"
+                    height="1200"
                     loading="lazy"
                   />
                 </div>
-                <!-- <figcaption>
-                  <strong>生蒸し海老</strong>
-                  <small>やわらかな甘みを引き出して。</small>
-                </figcaption> -->
+                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--atmosphere sushi-gallery__item--sign-tall"
               >
                 <div class="sushi-gallery__image">
                   <img
-                    src="images/12.jpg"
-                    alt="木の看板に刻まれた鮨道の印"
-                    width="1200"
-                    height="1600"
+                    src="images/gallery/egg.jpg"
+                    alt="卵"
+                    width="1600"
+                    height="1200"
                     loading="lazy"
                   />
                 </div>
@@ -431,7 +414,6 @@
                   />
                 </div>
               </figure>
-
             </div>
           </div>
           <!-- <p class="menu-note">
@@ -497,7 +479,6 @@
                 loading="lazy"
               />
             </figure>
-           
           </div>
           <div class="space__closing">
             <h3>日常から少し離れ、<br />一皿ごとの時間へ。</h3>
@@ -610,8 +591,18 @@
       <aside
         class="right-panel"
         aria-label="将来の店舗情報掲載スペース"
-      ></aside>
+      >
+      <div id="koi-pond" class="koi-pond" aria-label="鯉が泳ぐインタラクティブな生け簀">
+        <canvas class="koi-pond__canvas"></canvas>
+      </div>
+    </aside>
     </div>
     <script src="js/script.js" defer></script>
+    <script src="js/koi-pond.js"></script>
+    <script>
+      const pondElement = document.querySelector("#koi-pond");
+      const pond = new KoiPond(pondElement);
+      pond.start();
+    </script>
   </body>
 </html>
