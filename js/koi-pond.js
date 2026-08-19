@@ -1,17 +1,12 @@
 /**
- * 鮨道・生け簀
- *
- * 動作ルール
- * 1. 鯉はゆっくり自律移動する
- * 2. カーソルを止めると、少しずつ近寄る
- * 3. クリック／タップで波紋が生まれ、近くの鯉だけが逃げる
+ * 鮨道・生け簀（透過背景・近い順寄せ・控えめなゆらゆらモーション）
  */
 
 const POND_CONFIG = {
   escapeRadius: 300,
   escapeStrength: 7.6,
   attractionDelayMs: 650,
-  attractionForce: 0.0012,
+  attractionForce: 0.0018,
   calmSpeed: 0.72,
   burstSpeed: 6.8,
   burstDecay: 0.955,
@@ -20,9 +15,9 @@ const POND_CONFIG = {
 };
 
 const KOI_VARIANTS = [
-  { src: "images/koi/kohaku-anime.png", size: 176, startX: 0.22, startY: 0.32 },
-  { src: "images/koi/shiro-utsuri-anime.png", size: 158, startX: 0.66, startY: 0.6 },
-  { src: "images/koi/benigoi-anime.png", size: 148, startX: 0.48, startY: 0.22 },
+  { src: "images/koi/kohaku-anime.png", size: 176, startX: 0.22, startY: 0.32, startZ: 0.2 },
+  { src: "images/koi/shiro-utsuri-anime.png", size: 158, startX: 0.66, startY: 0.6, startZ: 0.5 },
+  { src: "images/koi/benigoi-anime.png", size: 148, startX: 0.48, startY: 0.22, startZ: 0.8 },
 ];
 
 class KoiPond {
@@ -54,6 +49,7 @@ class KoiPond {
 
     this.ripples = [];
     this.fish = KOI_VARIANTS.map((variant, index) => this.createFish(variant, index));
+    this.bottomWeeds = [];
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.onPointerMove = this.handlePointerMove.bind(this);
@@ -71,11 +67,30 @@ class KoiPond {
       image,
       x: 0,
       y: 0,
+      z: variant.startZ ?? 0.5,
       velocityX: index % 2 === 0 ? 0.36 : -0.34,
       velocityY: index === 1 ? -0.16 : 0.12,
+      velocityZ: 0,
       directionPhase: index * 2.1,
       burst: 0,
+      wigglePhase: index * 1.5,
     };
+  }
+
+  initAtmosphere() {
+    this.bottomWeeds = [];
+
+    const bottomWeedCount = 15;
+    for (let i = 0; i < bottomWeedCount; i++) {
+      this.bottomWeeds.push({
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        color: `hsla(${Math.random() * 25 + 125}, ${Math.random() * 20 + 55}%, ${Math.random() * 15 + 40}%, 0.35)`,
+        radius: Math.random() * 15 + 10,
+        yPhase: Math.random() * Math.PI * 2,
+        xPhase: Math.random() * Math.PI * 2,
+      });
+    }
   }
 
   start() {
@@ -112,6 +127,8 @@ class KoiPond {
         fish.y = fish.startY * this.height;
       }
     }
+
+    this.initAtmosphere();
   }
 
   pointerPosition(event) {
@@ -129,7 +146,6 @@ class KoiPond {
       isInside: true,
       lastMovedAt: performance.now(),
     };
-    // ここでは逃走処理をしない。逃げるのは pointerdown のときだけ。
   }
 
   handlePointerLeave() {
@@ -158,36 +174,62 @@ class KoiPond {
 
       fish.velocityX += (offsetX / distance) * impulse;
       fish.velocityY += (offsetY / distance) * impulse;
+      fish.velocityZ += 0.02 * impulse;
       fish.burst = 1;
     }
   }
 
-  updateFish(fish, time, frameScale) {
+  updateFish(time, frameScale) {
     const idleFor = time - this.pointer.lastMovedAt;
     const canApproachPointer = this.pointer.isInside && idleFor > this.config.attractionDelayMs;
 
-    if (canApproachPointer) {
-      const offsetX = this.pointer.x - fish.x;
-      const offsetY = this.pointer.y - fish.y;
-      const distance = Math.hypot(offsetX, offsetY) || 1;
+    let closestFish = null;
+    let minDistance = Infinity;
 
-      if (distance > 85) {
-        fish.velocityX += offsetX * this.config.attractionForce * frameScale;
-        fish.velocityY += offsetY * this.config.attractionForce * frameScale;
+    if (canApproachPointer) {
+      for (const fish of this.fish) {
+        const dist = Math.hypot(this.pointer.x - fish.x, this.pointer.y - fish.y);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestFish = fish;
+        }
       }
     }
 
-    // 完全な直線運動に見えない程度の、ごく小さな方向変化。
-    fish.velocityX += Math.cos(time * 0.00028 + fish.directionPhase) * 0.0007 * frameScale;
-    fish.velocityY += Math.sin(time * 0.00031 + fish.directionPhase) * 0.0007 * frameScale;
+    for (const fish of this.fish) {
+      const isTarget = fish === closestFish;
+      if (isTarget && minDistance > 12) {
+        const offsetX = this.pointer.x - fish.x;
+        const offsetY = this.pointer.y - fish.y;
 
-    fish.burst *= Math.pow(this.config.burstDecay, frameScale);
-    const speedLimit = this.config.calmSpeed + fish.burst * (this.config.burstSpeed - this.config.calmSpeed);
-    this.limitSpeed(fish, speedLimit);
+        fish.velocityX += offsetX * this.config.attractionForce * frameScale;
+        fish.velocityY += offsetY * this.config.attractionForce * frameScale;
+        fish.velocityZ -= 0.00015 * frameScale;
+      }
 
-    fish.x += fish.velocityX * frameScale * 2.4;
-    fish.y += fish.velocityY * frameScale * 2.4;
-    this.keepFishInPond(fish);
+      fish.velocityX += Math.cos(time * 0.00028 + fish.directionPhase) * 0.0007 * frameScale;
+      fish.velocityY += Math.sin(time * 0.00031 + fish.directionPhase) * 0.0007 * frameScale;
+      fish.velocityZ += Math.sin(time * 0.0002 + fish.directionPhase) * 0.0001 * frameScale;
+
+      fish.velocityZ *= 0.96;
+      fish.z += fish.velocityZ * frameScale;
+
+      if (fish.z < 0) {
+        fish.z = 0;
+        fish.velocityZ *= -0.5;
+      } else if (fish.z > 1) {
+        fish.z = 1;
+        fish.velocityZ *= -0.5;
+      }
+
+      fish.burst *= Math.pow(this.config.burstDecay, frameScale);
+      const speedLimit = this.config.calmSpeed + fish.burst * (this.config.burstSpeed - this.config.calmSpeed);
+      this.limitSpeed(fish, speedLimit);
+
+      fish.x += fish.velocityX * frameScale * 2.4;
+      fish.y += fish.velocityY * frameScale * 2.4;
+      this.keepFishInPond(fish);
+    }
   }
 
   limitSpeed(fish, speedLimit) {
@@ -213,21 +255,55 @@ class KoiPond {
     }
   }
 
+  drawBottomAtmosphere(time) {
+    this.context.save();
+    for (const weed of this.bottomWeeds) {
+      const floatY = Math.sin(time * 0.001 + weed.yPhase) * 12;
+      const floatX = Math.cos(time * 0.0008 + weed.xPhase) * 10;
+      const x = weed.x + floatX;
+      const y = weed.y + floatY;
+
+      this.context.beginPath();
+      const gradient = this.context.createRadialGradient(x, y, 0, x, y, weed.radius);
+      gradient.addColorStop(0, weed.color);
+      gradient.addColorStop(1, "transparent");
+      this.context.fillStyle = gradient;
+      this.context.arc(x, y, weed.radius, 0, Math.PI * 2);
+      this.context.fill();
+    }
+    this.context.restore();
+  }
+
   drawFish(fish, time) {
     if (!fish.image.complete || fish.image.naturalWidth === 0) return;
 
-    const angle = Math.atan2(fish.velocityY, fish.velocityX);
+    const currentSpeed = Math.hypot(fish.velocityX, fish.velocityY);
+    const baseAngle = Math.atan2(fish.velocityY, fish.velocityX);
+    
+    // 揺れの上限を抑える調整（速度に応じた振幅を最大約5.7度までに抑制）
+    const wiggleSpeed = 0.004 + currentSpeed * 0.0015;
+    const wiggleAmount = 0.02 + Math.min(currentSpeed * 0.02, 0.02); // ラジアン（約2.8〜5.7度）
+    const swimWiggle = Math.sin(time * wiggleSpeed + fish.wigglePhase) * wiggleAmount;
+
+    const angle = baseAngle + swimWiggle;
+
     const aspectRatio = fish.image.naturalHeight / fish.image.naturalWidth;
-    const drawWidth = fish.size;
+    const depthScale = 1 - fish.z * 0.38;
+    const drawWidth = fish.size * depthScale;
     const drawHeight = drawWidth * aspectRatio;
-    const glide = Math.sin(time * 0.002 + fish.directionPhase) * 1.2;
 
     this.context.save();
-    this.context.translate(fish.x, fish.y + glide);
+    this.context.translate(fish.x, fish.y);
     this.context.rotate(angle);
-    this.context.shadowColor = "rgba(0, 0, 0, 0.34)";
-    this.context.shadowBlur = 18;
-    this.context.globalAlpha = 0.92;
+
+    const shadowOffset = 18 * (1 + fish.z * 1.2);
+    this.context.shadowOffsetX = shadowOffset;
+    this.context.shadowOffsetY = shadowOffset;
+    this.context.shadowColor = `rgba(0, 0, 0, ${0.3 * depthScale})`;
+    this.context.shadowBlur = 20 * depthScale;
+
+    this.context.globalAlpha = Math.max(0.2, 0.95 * depthScale);
+
     this.context.drawImage(fish.image, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
     this.context.restore();
   }
@@ -243,8 +319,8 @@ class KoiPond {
       this.pointer.y,
       90,
     );
-    gradient.addColorStop(0, "rgba(191, 231, 218, 0.11)");
-    gradient.addColorStop(1, "rgba(191, 231, 218, 0)");
+    gradient.addColorStop(0, "rgba(255, 255, 255, 0.1)");
+    gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
     this.context.fillStyle = gradient;
     this.context.beginPath();
@@ -257,7 +333,7 @@ class KoiPond {
 
     for (const ripple of this.ripples) {
       const progress = (time - ripple.startedAt) / this.config.rippleDurationMs;
-      const opacity = (1 - progress) * 0.58;
+      const opacity = (1 - progress) * 0.5;
 
       for (const ring of [0, 1]) {
         const delayedProgress = Math.max(0, progress - ring * 0.12);
@@ -265,7 +341,7 @@ class KoiPond {
 
         this.context.beginPath();
         this.context.arc(ripple.x, ripple.y, radius, 0, Math.PI * 2);
-        this.context.strokeStyle = `rgba(216, 242, 233, ${opacity * (1 - ring * 0.28)})`;
+        this.context.strokeStyle = `rgba(255, 255, 255, ${opacity * (1 - ring * 0.3)})`;
         this.context.lineWidth = 1.2;
         this.context.stroke();
       }
@@ -278,14 +354,19 @@ class KoiPond {
     this.lastFrameTime = time;
 
     this.context.clearRect(0, 0, this.width, this.height);
+
+    this.drawBottomAtmosphere(time);
     this.drawPointerGlow();
 
+    this.updateFish(time, frameScale);
+
+    this.fish.sort((a, b) => b.z - a.z);
     for (const fish of this.fish) {
-      this.updateFish(fish, time, frameScale);
       this.drawFish(fish, time);
     }
 
     this.drawRipples(time);
+
     this.animationId = requestAnimationFrame(this.animate);
   }
 }
