@@ -1,5 +1,5 @@
 /**
- * 鮨道・生け簀（透過背景・近い順寄せ・控えめなゆらゆらモーション）
+ * 鮨道・生け簀（透過背景・近い順寄せ・ゆらゆら削除版）
  */
 
 const POND_CONFIG = {
@@ -292,15 +292,8 @@ class KoiPond {
   drawFish(fish, time) {
     if (!fish.image.complete || fish.image.naturalWidth === 0) return;
 
-    const currentSpeed = Math.hypot(fish.velocityX, fish.velocityY);
-    const baseAngle = Math.atan2(fish.velocityY, fish.velocityX);
-    
-    // 揺れの上限を抑える調整（速度に応じた振幅を最大約5.7度までに抑制）
-    const wiggleSpeed = 0.004 + currentSpeed * 0.0015;
-    const wiggleAmount = 0.02 + Math.min(currentSpeed * 0.02, 0.02); // ラジアン（約2.8〜5.7度）
-    const swimWiggle = Math.sin(time * wiggleSpeed + fish.wigglePhase) * wiggleAmount;
-
-    const angle = baseAngle + swimWiggle;
+    // 進行方向の角度を計算（ゆらゆら運動は除外）
+    const angle = Math.atan2(fish.velocityY, fish.velocityX);
 
     const aspectRatio = fish.image.naturalHeight / fish.image.naturalWidth;
     const depthScale = 1 - fish.z * 0.38;
