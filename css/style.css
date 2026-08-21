@@ -1851,11 +1851,12 @@ a {
     min-width: 150px;
     flex: 0 0 43%;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 42px 22px 28px;
+    justify-content: flex-start;
+    padding: 42px 22px max(28px, calc(env(safe-area-inset-bottom) + 18px));
     overflow-y: auto;
     border-right: 1px solid var(--line);
     background: rgba(17, 23, 25, 0.96);
+    overscroll-behavior: contain;
   }
 
   .mobile-menu__kicker {
@@ -1910,16 +1911,41 @@ a {
   .mobile-menu__links {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    width: 100%;
+    max-width: 212px;
+    margin-top: 52px;
+    gap: 10px 12px;
   }
 
   .mobile-menu__links a {
-    color: #777c78;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    line-height: 1.5;
-    text-transform: uppercase;
-    transition: color 0.2s ease;
+    display: flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.82;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .mobile-menu__links img {
+    display: block;
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  .mobile-menu__link--tel img {
+    filter: brightness(0) invert(0.78);
+  }
+
+  .mobile-menu__links a:hover,
+  .mobile-menu__links a:focus-visible {
+    opacity: 1;
+    outline: 1px solid rgba(222, 219, 210, 0.42);
+    outline-offset: 2px;
+    transform: translateY(-1px);
   }
 
   .mobile-menu__koi {
@@ -1929,7 +1955,11 @@ a {
     flex: 1 1 auto;
     border-radius: 0;
     background:
-      radial-gradient(circle at 52% 36%, rgba(65, 92, 84, 0.16), transparent 42%),
+      radial-gradient(
+        circle at 52% 36%,
+        rgba(65, 92, 84, 0.16),
+        transparent 42%
+      ),
       var(--ink);
     cursor: crosshair;
   }
@@ -2380,7 +2410,12 @@ a {
   .mobile-menu__navigation {
     min-width: 142px;
     flex-basis: 42%;
-    padding: 36px 18px 24px;
+    padding: 36px 18px max(24px, calc(env(safe-area-inset-bottom) + 16px));
+  }
+
+  .mobile-menu__links {
+    max-width: 100px;
+    margin-top: 42px;
   }
 
   .mobile-menu__nav a {
