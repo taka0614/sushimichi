@@ -1717,6 +1717,10 @@ a {
     overflow: auto;
   }
 
+  main#top {
+    padding-top: 68px;
+  }
+
   .site-shell {
     display: block;
     height: auto;
