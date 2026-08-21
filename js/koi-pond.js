@@ -12,6 +12,7 @@ const POND_CONFIG = {
   burstDecay: 0.955,
   rippleDurationMs: 900,
   pixelRatioLimit: 2,
+  keepFishFullyVisible: false,
 };
 
 const KOI_VARIANTS = [
@@ -241,8 +242,22 @@ class KoiPond {
   }
 
   keepFishInPond(fish) {
-    const marginX = this.width * 0.04;
-    const marginY = this.height * 0.08;
+    let marginX = this.width * 0.04;
+    let marginY = this.height * 0.08;
+
+    if (this.config.keepFishFullyVisible) {
+      const aspectRatio = fish.image.naturalWidth
+        ? fish.image.naturalHeight / fish.image.naturalWidth
+        : 0.5;
+      const depthScale = 1 - fish.z * 0.38;
+      const drawWidth = fish.size * depthScale;
+      const drawHeight = drawWidth * aspectRatio;
+      const bodyRadius = Math.hypot(drawWidth, drawHeight) / 2;
+      const edgeInset = bodyRadius + 10;
+
+      marginX = Math.max(marginX, edgeInset);
+      marginY = Math.max(marginY, edgeInset);
+    }
 
     if (fish.x < marginX || fish.x > this.width - marginX) {
       fish.velocityX *= -0.86;

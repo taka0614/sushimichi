@@ -11,7 +11,7 @@
     />
     <link rel="preload" href="images/sushimichi-logo.svg" as="image" />
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/koi-pond.css">
+    <link rel="stylesheet" href="css/koi-pond.css" />
     <title>鮨道｜SUSHIMICHI</title>
     <meta
       name="description"
@@ -53,6 +53,17 @@
             <span>店舗案内</span>
           </a>
         </nav>
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          aria-label="メニューを開く"
+        >
+          <span class="menu-toggle__line" aria-hidden="true"></span>
+          <span class="menu-toggle__line" aria-hidden="true"></span>
+          <span class="menu-toggle__line" aria-hidden="true"></span>
+        </button>
         <div class="left-panel__bottom">
           <p>なまら旨い 鮨道 狸小路</p>
           <small>Counter sushi, reimagined in Sapporo.</small>
@@ -344,7 +355,6 @@
                     loading="lazy"
                   />
                 </div>
-                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--second-right"
@@ -358,7 +368,6 @@
                     loading="lazy"
                   />
                 </div>
-                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--third-wide"
@@ -372,7 +381,6 @@
                     loading="lazy"
                   />
                 </div>
-                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--third-mid-left"
@@ -386,7 +394,6 @@
                     loading="lazy"
                   />
                 </div>
-                
               </figure>
               <figure
                 class="sushi-gallery__item sushi-gallery__item--atmosphere sushi-gallery__item--sign-tall"
@@ -588,21 +595,69 @@
           </footer>
         </section>
       </main>
-      <aside
-        class="right-panel"
-        aria-label="将来の店舗情報掲載スペース"
+      <aside class="right-panel" aria-label="将来の店舗情報掲載スペース">
+        <div
+          id="koi-pond"
+          class="koi-pond"
+          aria-label="鯉が泳ぐインタラクティブな生け簀"
+        >
+          <canvas class="koi-pond__canvas"></canvas>
+        </div>
+      </aside>
+      <div
+        class="mobile-menu"
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="スマートフォン用メニュー"
+        aria-hidden="true"
+        hidden
       >
-      <div id="koi-pond" class="koi-pond" aria-label="鯉が泳ぐインタラクティブな生け簀">
-        <canvas class="koi-pond__canvas"></canvas>
+        <div class="mobile-menu__panel">
+          <div class="mobile-menu__navigation">
+            <div>
+              <p class="mobile-menu__kicker">MENU</p>
+              <nav
+                class="mobile-menu__nav"
+                aria-label="スマートフォン用ページ内ナビゲーション"
+              >
+                <a href="#top">はじまり</a>
+                <a href="#experience">鮨道の体験</a>
+                <a href="#omakase">おまかせ</a>
+                <a href="#space">空間</a>
+                <a href="#access">店舗案内</a>
+              </nav>
+            </div>
+            <div class="mobile-menu__links">
+              <a
+                href="https://maps.app.goo.gl/XkGSWerGwprr12NK7"
+                target="_blank"
+                rel="noreferrer"
+                >Google Maps</a
+              >
+              <a
+                href="https://www.instagram.com/sushimichi.tanukikoji/?hl=ja"
+                target="_blank"
+                rel="noreferrer"
+                >Instagram</a
+              >
+              <a href="https://lin.ee/wVjKdMo" target="_blank" rel="noreferrer"
+                >LINE</a
+              >
+              <a href="tel:07015833307">TEL</a>
+            </div>
+          </div>
+          <div
+            id="mobile-koi-pond"
+            class="koi-pond mobile-menu__koi"
+            aria-label="指先の動きに応えて鯉が泳ぐ生け簀"
+          >
+            <canvas class="koi-pond__canvas" aria-hidden="true"></canvas>
+          </div>
+        </div>
       </div>
-    </aside>
     </div>
+    <script src="js/koi-pond.js" defer></script>
     <script src="js/script.js" defer></script>
-    <script src="js/koi-pond.js"></script>
-    <script>
-      const pondElement = document.querySelector("#koi-pond");
-      const pond = new KoiPond(pondElement);
-      pond.start();
-    </script>
   </body>
 </html>

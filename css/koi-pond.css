@@ -57,6 +57,11 @@
   touch-action: none;
 }
 
+.koi-pond.mobile-menu__koi {
+  min-height: 0;
+  border-radius: 0;
+}
+
 .koi-pond::after {
   position: absolute;
   inset: 0;
